@@ -7,7 +7,7 @@ This Example DAG:
 
 Pre-requisites:
  - Create an Airflow Connection to connect to Bigquery Table. Example:
-    export AIRFLOW_CONN_BQ_TABLE="bigquery://astronomer-dag-authoring"
+    export AIRFLOW_CONN_BIGQUERY="bigquery://astronomer-dag-authoring"
  - You can either specify a service account key file and set `GOOGLE_APPLICATION_CREDENTIALS`
     with the file path to the service account.
 """
@@ -28,7 +28,7 @@ with DAG(
     t1 = aql.load_file(
         task_id="load_from_github_to_bq",
         path="https://raw.githubusercontent.com/astro-projects/astro/main/tests/data/imdb.csv",
-        output_table=Table("imdb_movies", conn_id="bq_table", schema="astro"),
+        output_table=Table("imdb_movies", conn_id="bigquery", schema="astro"),
     )
 
     # Setting "identifiers_as_lower" to True will lowercase all column names
@@ -48,6 +48,6 @@ with DAG(
         input=t2,
         output_file_path="gs://dag-authoring/{{ task_instance_key_str }}/top_5_movies.csv",
         output_file_format="csv",
-        output_conn_id="google_cloud_default",
+        output_conn_id="gcp_conn",
         overwrite=True,
     )
